@@ -1,29 +1,29 @@
 apiVersion: cloud.ibm.com/v1alpha1
 kind: BillOfMaterial
 metadata:
-  name: 200-openshift-gitops
+  name: 210-ibm-odf-storage
   labels:
-    type: software
-    code: '200'
+    type: infrastructure
+    platform: ibm
+    code: '210'
+    storage: odf
   annotations:
-    displayName: OpenShift GitOps Bootstrap
-    description: >-
-      Provisions OpenShift GitOps (ArgoCD) into an existing cluster and
-      bootstraps it to a gitops repository
+    displayName: IBM - ODF Cluster Storage
+    description: Installs OpenShift Data Foundation in an IBM cluster
 spec:
   modules:
     - name: gitea
       alias: gitea
       version: v0.5.0
       dependencies:
-        - name: namespace
+        - id: namespace
           ref: gitea_namespace
-    - name: gitops-cluster-config
-      alias: gitops-cluster-config
-      version: v1.0.0
-    - name: gitops-console-link-job
-      alias: gitops-console-link-job
-      version: v1.4.6
+    - name: gitops-ibm-odf
+      alias: gitops-ibm-odf
+      version: v0.2.1
+      variables:
+        - name: cluster_name
+          scope: global
     - name: gitops-namespace
       alias: gitea_namespace
       version: v1.11.2
@@ -31,23 +31,15 @@ spec:
         - name: name
           value: gitea
     - name: gitops-namespace
-      alias: toolkit_namespace
+      alias: odf_namespace
       version: v1.11.2
       default: true
       variables:
         - name: name
-          value: toolkit
+          value: odf
     - name: gitops-repo
       alias: gitops_repo
       version: v1.21.0
-    - name: argocd-bootstrap
-      alias: argocd-bootstrap
-      version: v1.12.0
-      variables:
-        - name: create_webhook
-          value: true
-        - name: prefix
-          value: maximo
     - name: ocp-login
       alias: cluster
       version: v1.6.0
@@ -57,12 +49,10 @@ spec:
       alias: gitea_namespace
       version: v3.2.3
       variables: *ref_0
-    - name: sealed-secret-cert
-      version: v1.0.1
   variables:
-    - name: gitops-cluster-config_banner_text
+    - name: ibmcloud_api_key
       type: string
-      description: The text that will appear in the top banner in the cluster
+      description: The api key for IBM Cloud access
     - name: gitops_repo_host
       type: string
       description: >-

@@ -1,5 +1,5 @@
-## gitops-cluster-config_banner_text: The text that will appear in the top banner in the cluster
-#gitops-cluster-config_banner_text=""
+## ibmcloud_api_key: The api key for IBM Cloud access
+#ibmcloud_api_key=""
 
 ## gitops_repo_host: The host for the git repository. The git host used can be a GitHub, GitHub Enterprise, Gitlab, Bitbucket, Gitea or Azure DevOps server. If the host is null assumes in-cluster Gitea instance will be used.
 #gitops_repo_host=""

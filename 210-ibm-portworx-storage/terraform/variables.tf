@@ -18,34 +18,34 @@ variable "gitea_ca_cert_file" {
   description = "The path to the file that contains the ca certificate"
   default = ""
 }
-variable "gitops-cluster-config_banner_background_color" {
+variable "ibmcloud_api_key" {
   type = string
-  description = "The background color of the top banner. This value can be a named color (e.g. purple, red) or an RGB value (#FF0000)."
-  default = "purple"
+  description = "The api key for the IBM Cloud account"
 }
-variable "gitops-cluster-config_banner_text_color" {
+variable "region" {
   type = string
-  description = "The text color for the top banner. This value can be a named color (e.g. purple, red) or an RGB value (#FF0000)."
-  default = "white"
+  description = "The region where the Portworx service should be deployed. This region used doesn't really impact anything because the service runs in the cluster"
+  default = "us-east"
 }
-variable "gitops-cluster-config_banner_text" {
+variable "gitops-ibm-portworx_encryption_key" {
   type = string
-  description = "The text that will appear in the top banner in the cluster"
-}
-variable "gitops-console-link-job_cluster_ingress_hostname" {
-  type = string
-  description = "Ingress hostname of the IKS cluster."
+  description = "The crn for the encryption key that should be used to encrypt the volume. If not provided the volume will be encrypted with an IBM-managed key"
   default = ""
 }
-variable "gitops-console-link-job_cluster_type" {
+variable "gitops-ibm-portworx_capacity" {
   type = string
-  description = "The cluster type (openshift or ocp3 or ocp4 or kubernetes)"
-  default = "ocp4"
+  description = "The capacity of the portworx volume"
+  default = "200"
 }
-variable "gitops-console-link-job_tls_secret_name" {
+variable "gitops-ibm-portworx_iops" {
   type = string
-  description = "The name of the secret containing the tls certificate values"
+  description = "The transfer speed of the portworx volume. This value is only used if the profile is set to 'custom'"
   default = ""
+}
+variable "gitops-ibm-portworx_profile" {
+  type = string
+  description = "The profile of the portworx volumes"
+  default = "10iops-tier"
 }
 variable "gitea_namespace_name" {
   type = string
@@ -67,22 +67,22 @@ variable "gitea_namespace_argocd_namespace" {
   description = "The namespace where argocd has been deployed"
   default = "openshift-gitops"
 }
-variable "toolkit_namespace_name" {
+variable "portworx_namespace_name" {
   type = string
   description = "The value that should be used for the namespace"
-  default = "toolkit"
+  default = "portworx"
 }
-variable "toolkit_namespace_ci" {
+variable "portworx_namespace_ci" {
   type = bool
   description = "Flag indicating that this namespace will be used for development (e.g. configmaps and secrets)"
   default = false
 }
-variable "toolkit_namespace_create_operator_group" {
+variable "portworx_namespace_create_operator_group" {
   type = bool
   description = "Flag indicating that an operator group should be created in the namespace"
   default = true
 }
-variable "toolkit_namespace_argocd_namespace" {
+variable "portworx_namespace_argocd_namespace" {
   type = string
   description = "The namespace where argocd has been deployed"
   default = "openshift-gitops"
@@ -141,6 +141,11 @@ variable "gitops_repo_server_name" {
   description = "The name of the cluster that will be configured via gitops. This is used to separate the config by cluster"
   default = "default"
 }
+variable "gitops_repo_sealed_secrets_cert" {
+  type = string
+  description = "The certificate/public key used to encrypt the sealed secrets"
+  default = ""
+}
 variable "gitops_repo_strict" {
   type = bool
   description = "Flag indicating that an error should be thrown if the repo already exists"
@@ -151,15 +156,19 @@ variable "debug" {
   description = "Flag indicating that debug loggging should be enabled"
   default = false
 }
-variable "argocd-bootstrap_bootstrap_prefix" {
+variable "resource_group_name" {
   type = string
-  description = "The prefix used in ArgoCD to bootstrap the application"
+  description = "The name of the resource group"
+}
+variable "resource_group_sync" {
+  type = string
+  description = "Value used to order the provisioning of the resource group"
   default = ""
 }
-variable "argocd-bootstrap_create_webhook" {
+variable "purge_volumes" {
   type = bool
-  description = "Flag indicating that a webhook should be created in the gitops repo to notify argocd of changes"
-  default = true
+  description = "Flag indicating that any volumes in the resource group should be automatically destroyed before destroying the resource group. If volumes exist and the flag is false then the destroy will fail."
+  default = false
 }
 variable "server_url" {
   type = string
@@ -207,25 +216,5 @@ variable "cluster_ca_cert" {
 variable "cluster_ca_cert_file" {
   type = string
   description = "The path to the file that contains the ca certificate"
-  default = ""
-}
-variable "sealed-secret-cert_cert" {
-  type = string
-  description = "The public key that will be used to encrypt sealed secrets. If not provided, a new one will be generated"
-  default = ""
-}
-variable "sealed-secret-cert_private_key" {
-  type = string
-  description = "The private key that will be used to decrypt sealed secrets. If not provided, a new one will be generated"
-  default = ""
-}
-variable "sealed-secret-cert_cert_file" {
-  type = string
-  description = "The file containing the public key that will be used to encrypt the sealed secrets. If not provided a new public key will be generated"
-  default = ""
-}
-variable "sealed-secret-cert_private_key_file" {
-  type = string
-  description = "The file containin the private key that will be used to encrypt the sealed secrets. If not provided a new private key will be generated"
   default = ""
 }
